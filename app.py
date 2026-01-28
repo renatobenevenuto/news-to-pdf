@@ -25,9 +25,10 @@ class PDF_Gerador(FPDF):
     def header(self):
         self.set_font('helvetica', 'B', 8)
         self.set_text_color(100, 100, 100)
+        # Assinatura Renato Benevenuto
         self.cell(0, 5, 'Gerado via News2PDF Pro de Renato Benevenuto', 0, 1, 'R')
         self.set_font('helvetica', 'I', 7)
-        url_link = (self.source_url[:80] + '..') if len(self.source_url) > 80 else self.source_url
+        url_link = (self.source_url[:85] + '..') if len(self.source_url) > 85 else self.source_url
         self.cell(0, 5, f'Fonte: {url_link}', 0, 1, 'R')
         self.ln(10)
 
@@ -44,18 +45,18 @@ def tratar_texto(texto):
 
 # --- INTERFACE ---
 st.title("📑 News2PDF Pro")
-st.markdown("Extração de notícias com **Imagens**, **Tradução** e **Resumo**.")
+st.markdown("Extração inteligente de notícias com suporte a **Imagens**, **Tradução** e **Resumo por IA**.")
 
 with st.sidebar:
     st.header("Configurações")
     traduzir = st.checkbox("Traduzir para Português", value=True)
 
-url_input = st.text_input("Cole a URL da notícia:")
+url_input = st.text_input("Cole a URL da notícia aqui:")
 
 if st.button("🚀 Processar Notícia"):
     if url_input:
         try:
-            with st.spinner("Extraindo dados e imagens..."):
+            with st.spinner("Extraindo e traduzindo conteúdo..."):
                 config = Config()
                 config.browser_user_agent = 'Mozilla/5.0'
                 artigo = Article(url_input, config=config)
@@ -77,11 +78,11 @@ if st.button("🚀 Processar Notícia"):
                 if img_url:
                     st.image(img_url, use_container_width=True)
                 
-                with st.expander("🔍 Ver Resumo Executivo"):
-                    st.info(resumo)
-                
-                st.markdown("### 📝 Conteúdo Completo")
-                st.write(corpo) # <--- ISSO GARANTE A EXIBIÇÃO NA TELA
+                col1, col2 = st.columns([1, 2])
+                with col1:
+                    st.info("**Resumo Executivo (IA)**\n\n" + resumo)
+                with col2:
+                    st.write("**Conteúdo Extraído**\n\n" + corpo)
 
                 # --- GERAÇÃO DO PDF ---
                 pdf = PDF_Gerador(source_url=url_input)
@@ -110,11 +111,11 @@ if st.button("🚀 Processar Notícia"):
                 pdf.set_font('helvetica', '', 11)
                 pdf.multi_cell(0, 8, tratar_texto(corpo))
 
+                # Conversão binária para download
                 pdf_bytes = bytes(pdf.output())
                 nome_arq = f"{datetime.now().strftime('%Y%m%d')}_{limpar_nome_arquivo(titulo)}.pdf"
                 
                 st.download_button("📥 Baixar PDF com Imagens", data=pdf_bytes, file_name=nome_arq, mime="application/pdf")
-                st.success("PDF gerado com sucesso!")
 
         except Exception as e:
-            st.error(f"Erro: {e}")
+            st.error(f"Erro no processamento: {e}")
