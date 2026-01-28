@@ -113,3 +113,11 @@ if st.button("🚀 Processar Notícia"):
                     
                     st.download_button(
                         label="📥 Baixar PDF em Português",
+                        data=pdf_output,
+                        file_name=nome_arq,
+                        mime="application/pdf"
+                    )
+                else:
+                    st.error("Falha ao extrair o texto. O site pode estar bloqueando o acesso.")
+        except Exception as e:
+            st.error(f"Erro no processamento: {e}")
