@@ -3,3 +3,4 @@ newspaper3k
 fpdf2
 lxml_html_clean
 nltk
+deep-translator
