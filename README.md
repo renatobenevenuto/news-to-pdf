@@ -1,46 +1,39 @@
 # news-to-pdf
 transforma noticias de sites em pdf para serem lidos
 
-# 📄 News2PDF: Extrator de Notícias Limpas
+# 📑 News2PDF Pro
 
-Um conversor inteligente que extrai o conteúdo principal de portais de notícias, remove anúncios, pop-ups e poluição visual, gerando um documento PDF organizado e pronto para leitura.
+O **News2PDF Pro** é uma ferramenta de engenharia de dados e automação desenvolvida para transformar notícias poluídas da web em documentos PDF organizados, resumidos e traduzidos. Ideal para acadêmicos, professores e profissionais que buscam uma leitura focada e produtiva.
 
 ## 🚀 Funcionalidades
-- **Remoção de Paywalls Suaves:** Utiliza bibliotecas de extração que ignoram scripts de bloqueio visual.
-- **Formatação Automática:** Gera PDFs com título, data e corpo de texto limpo.
-- **Organização Cronológica:** Nomeia os arquivos automaticamente no formato `YYYYMMDD_Titulo.pdf`.
-- **Interface Web:** Simples e intuitiva construída com Streamlit.
+- **Extração Limpa:** Remove anúncios, barras laterais e pop-ups.
+- **Resumo Inteligente:** Utiliza NLP (Natural Language Processing) para gerar um resumo executivo.
+- **Tradução Automática:** Traduz notícias de qualquer idioma para o Português.
+- **Organização Cronológica:** Nomenclatura automática de arquivos com data e título.
+- **Visualização Integrada:** Leitura direta no navegador antes do download.
 
 ## 🛠️ Tecnologias Utilizadas
-- **Python 3.x**
-- **Streamlit**: Para a interface web.
-- **Newspaper3k**: Para extração de conteúdo e Processamento de Linguagem Natural (NLP) básico.
-- **FPDF2**: Para geração de documentos PDF.
+- **Python 3.10+**
+- **Streamlit**: Interface web responsiva.
+- **Newspaper3k**: Engine de extração e processamento de linguagem natural.
+- **FPDF2**: Motor de geração de documentos PDF de alta fidelidade.
+- **Deep Translator**: Tradução via Google Translate API.
 
-## 💻 Como rodar localmente
-Se você quiser rodar na sua própria máquina (com VS Code ou Anaconda):
+## 📈 Jornada de Desenvolvimento (Stages)
 
-1. Clone o repositório:
-   ```bash
-   git clone [https://github.com/SEU_USUARIO/NOME_REPOSITORIO.git](https://github.com/SEU_USUARIO/NOME_REPOSITORIO.git)
+O projeto evoluiu através de etapas de refinamento técnico:
 
+1.  **Stage 1: Script de Extração:** Protótipo inicial focado apenas em extrair texto puro via terminal.
+2.  **Stage 2: Interface Web:** Implementação da UI com Streamlit para facilitar o uso por terceiros.
+3.  **Stage 3: Inteligência Artificial:** Integração do NLTK para geração de resumos automáticos e tradução de textos longos.
+4.  **Stage 4: UX & Organização:** Adição de visualização prévia, cabeçalhos personalizados com metadados e sanitização de arquivos.
+5.  **Stage 5: Estabilidade:** Correções de compatibilidade com navegadores Chromium (Bypass de erros binários e CSP).
+
+## 📥 Como Rodar este Projeto
+1. Clone o repositório.
 2. Instale as dependências:
-
-Bash
-pip install -r requirements.txt
-
+   ```bash
+   pip install streamlit newspaper3k fpdf2 lxml_html_clean nltk deep-translator
 3. Execute a aplicação:
-
-Bash
 streamlit run app.py
-
-🌐 Deploy (Como colocar no ar)
-Esta aplicação foi projetada para ser hospedada gratuitamente no Streamlit Cloud:
-
-Suba os arquivos app.py e requirements.txt para o seu GitHub.
-
-Acesse share.streamlit.io.
-
-Conecte seu repositório e clique em Deploy.
-
-Desenvolvido como projeto de automação e ciência de dados.
+Desenvolvido por Renato Benevenuto.
