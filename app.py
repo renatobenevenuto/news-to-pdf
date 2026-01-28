@@ -7,7 +7,7 @@ import nltk
 from deep_translator import GoogleTranslator
 import base64
 
-# --- CONFIGURAÇÃO E CORREÇÃO NLTK ---
+# --- CONFIGURAÇÃO NLTK ---
 def setup_nltk():
     recursos = ['punkt', 'punkt_tab', 'stopwords']
     for r in recursos:
@@ -18,21 +18,19 @@ def setup_nltk():
 
 setup_nltk()
 
-# --- CONFIGURAÇÃO DA PÁGINA ---
 st.set_page_config(page_title="News2PDF Pro", page_icon="📑", layout="wide")
 
 class PDF_Gerador(FPDF):
     def header(self):
         self.set_font('helvetica', 'B', 8)
         self.set_text_color(150, 150, 150)
-        self.cell(0, 10, 'Gerado automaticamente via News2PDF Pro', 0, 1, 'R')
+        self.cell(0, 10, 'Gerado via News2PDF Pro', 0, 1, 'R')
 
     def footer(self):
         self.set_y(-15)
         self.set_font('helvetica', 'I', 8)
         self.cell(0, 10, f'Página {self.page_no()}', 0, 0, 'C')
 
-# --- FUNÇÕES DE UTILIDADE ---
 def limpar_nome_arquivo(titulo):
     nome = re.sub(r'[\\/*?:"<>|]', "", titulo)
     return nome[:80].strip()
@@ -51,28 +49,26 @@ def traduzir_conteudo(texto):
         return texto
 
 def exibir_pdf(pdf_bytes):
-    """Gera um frame HTML para visualizar o PDF na tela."""
+    """Gera um frame HTML compatível com Chromium para visualizar o PDF."""
     base64_pdf = base64.b64encode(pdf_bytes).decode('utf-8')
-    pdf_display = f'<iframe src="data:application/pdf;base64,{base64_pdf}" width="100%" height="600" type="application/pdf"></iframe>'
+    # Usar <embed> em vez de <iframe> aumenta a compatibilidade com Edge e Chrome
+    pdf_display = f'<embed src="data:application/pdf;base64,{base64_pdf}" width="100%" height="700" type="application/pdf">'
     st.markdown("### 📖 Visualização Prévia")
     st.markdown(pdf_display, unsafe_allow_html=True)
 
 # --- INTERFACE ---
 st.title("📑 News2PDF Pro: Extrator & Tradutor")
-st.markdown("Extraia, resuma, traduza e visualize notícias de qualquer lugar do mundo.")
 
 with st.sidebar:
-    st.header("Configurações")
+    st.header("Opções")
     traduzir = st.checkbox("Traduzir para Português", value=True)
-    st.info("O processamento de textos longos pode levar alguns segundos.")
 
-url = st.text_input("Cole o link da notícia aqui:", placeholder="https://www.nytimes.com/...")
+url = st.text_input("Link da notícia:", placeholder="Cole a URL aqui...")
 
-if st.button("🚀 Processar Notícia"):
+if st.button("🚀 Processar"):
     if url:
         try:
-            with st.spinner("Extraindo e gerando seu documento..."):
-                # 1. Extração e NLP
+            with st.spinner("Extraindo e processando..."):
                 config = Config()
                 config.browser_user_agent = 'Mozilla/5.0'
                 artigo = Article(url, config=config)
@@ -82,28 +78,18 @@ if st.button("🚀 Processar Notícia"):
                 
                 titulo, resumo, corpo = artigo.title, artigo.summary, artigo.text
 
-                # 2. Tradução
                 if traduzir:
                     titulo = traduzir_conteudo(titulo)
                     resumo = traduzir_conteudo(resumo)
                     corpo = traduzir_conteudo(corpo)
 
-                # 3. Geração do PDF em memória
+                # Geração do PDF
                 pdf = PDF_Gerador()
                 pdf.add_page()
-                
-                # Título Principal
                 pdf.set_font('helvetica', 'B', 16)
                 pdf.multi_cell(0, 10, tratar_texto_pdf(titulo))
-                pdf.ln(5)
-                
-                # Metadados
-                pdf.set_font('helvetica', 'I', 8)
-                pdf.cell(0, 5, f"Extraído em: {datetime.now().strftime('%d/%m/%Y %H:%M')}", ln=1)
-                pdf.cell(0, 5, f"Fonte: {url[:90]}...", ln=1)
                 pdf.ln(10)
 
-                # Seção de Resumo
                 pdf.set_font('helvetica', 'B', 12)
                 pdf.set_fill_color(240, 240, 240)
                 pdf.cell(0, 10, "RESUMO EXECUTIVO", 0, 1, 'L', fill=True)
@@ -111,28 +97,18 @@ if st.button("🚀 Processar Notícia"):
                 pdf.multi_cell(0, 7, tratar_texto_pdf(resumo))
                 pdf.ln(10)
 
-                # Seção de Conteúdo Completo
                 pdf.set_font('helvetica', 'B', 12)
                 pdf.cell(0, 10, "CONTEÚDO COMPLETO", 0, 1, 'L')
                 pdf.set_font('helvetica', '', 11)
                 pdf.multi_cell(0, 8, tratar_texto_pdf(corpo))
 
-                # Conversão para bytes
                 pdf_bytes = bytes(pdf.output()) 
                 
-                # 4. Exibição na Tela (Visualização)
+                # Visualização e Download
                 exibir_pdf(pdf_bytes)
                 
-                # 5. Botão de Download
-                nome_arquivo = f"{datetime.now().strftime('%Y%m%d')}_{limpar_nome_arquivo(titulo)}.pdf"
-                st.download_button(
-                    label="📥 Baixar Documento PDF",
-                    data=pdf_bytes,
-                    file_name=nome_arquivo,
-                    mime="application/pdf"
-                )
+                nome_arq = f"{datetime.now().strftime('%Y%m%d')}_{limpar_nome_arquivo(titulo)}.pdf"
+                st.download_button("📥 Baixar PDF", data=pdf_bytes, file_name=nome_arq, mime="application/pdf")
 
         except Exception as e:
-            st.error(f"Ocorreu um erro inesperado: {e}")
-    else:
-        st.warning("Por favor, insira uma URL válida.")
+            st.error(f"Erro: {e}")
