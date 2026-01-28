@@ -1,36 +1,60 @@
+📑 News2PDF Pro: Inteligência em Leitura
+O News2PDF Pro é uma solução de Engenharia de Dados e NLP (Processamento de Linguagem Natural) desenvolvida para otimizar o consumo de informações técnicas e acadêmicas. A ferramenta extrai o conteúdo essencial de portais de notícias globais, eliminando distrações, traduzindo idiomas e gerando resumos executivos automáticos em documentos PDF de alta qualidade.
 
-# 📑 News2PDF Pro
+🌟 Proposta de Valor
+Em um cenário de excesso de informação e interfaces poluídas por anúncios e paywalls, o News2PDF Pro atua como um filtro inteligente. Ele permite que pesquisadores, professores e estudantes foquem no que realmente importa: o conteúdo.
 
-**News2PDF Pro** é uma solução inteligente de curadoria de conteúdo que transforma URLs de notícias em documentos PDF limpos, traduzidos e enriquecidos com Inteligência Artificial. 
+🚀 Etapas de Evolução (Development Stages)
+A construção deste projeto seguiu um ciclo de desenvolvimento incremental, demonstrando um pensamento de engenharia estruturado:
 
-Desenvolvido por **Renato Benevenuto**, o projeto nasceu da necessidade de converter artigos poluídos por anúncios em materiais de leitura focada para fins acadêmicos e profissionais.
+Stage 1: Ingestão de Dados (Scraping): Implementação do motor de extração utilizando newspaper3k com cabeçalhos de navegador real para contornar bloqueios básicos.
 
-## 🌟 Funcionalidades Principais
-- **Extração Inteligente:** Captura título, texto principal e a imagem de destaque da matéria.
-- **Resumo Executivo (IA):** Gera um resumo automático dos pontos cruciais utilizando NLTK.
-- **Tradução Global:** Converte automaticamente conteúdos estrangeiros para o Português.
-- **Visualização Dinâmica:** Exibe uma prévia da notícia (texto e imagem) diretamente na interface.
-- **PDF de Alta Qualidade:** Documentos formatados com cabeçalho personalizado e metadados de origem.
+Stage 2: Interface e Acessibilidade: Desenvolvimento da interface web com Streamlit, permitindo que o processamento de scripts complexos seja acessível via navegador.
 
-## 🛠️ Evolução do Projeto
-O desenvolvimento seguiu um rigoroso processo de engenharia de software:
-1. **MVP (Minimum Viable Product):** Script básico de extração via terminal.
-2. **Integração UI:** Implementação da interface web com Streamlit.
-3. **Camada de IA:** Adição de processamento de linguagem natural para resumos.
-4. **Multimídia & Tradução:** Suporte a imagens e localização de idiomas.
-5. **Estabilização:** Otimização para navegadores Chromium e correção de erros de memória binária.
+Stage 3: Camada de Inteligência (NLP): Integração com o NLTK para análise semântica, identificando as sentenças mais relevantes para a criação de um resumo executivo automático.
 
-## 📦 Instalação e Uso
-1. Certifique-se de ter o Python 3.10+ instalado.
-2. Instale as dependências:
-   ```bash
-   pip install streamlit newspaper3k fpdf2 lxml_html_clean nltk deep-translator requests
+Stage 4: Localização e Multimídia: Implementação de suporte a tradução via deep-translator e captura de imagens dinâmicas para enriquecer o documento final.
 
-3. Execute a aplicação:
+Stage 5: Estabilização de UX: Refinamento da saída binária para PDF (fpdf2) e correção de compatibilidade com navegadores Chromium (Edge/Chrome), resolvendo desafios de renderização de memória.
 
+🛠️ Tecnologias e Bibliotecas
+Python 3.10+: Linguagem base do pipeline.
+
+Streamlit: Framework para a criação da interface web interativa.
+
+Newspaper3k: Biblioteca líder para extração e curadoria de artigos web.
+
+FPDF2: Motor de geração de PDFs que permite controle total sobre o layout e metadados.
+
+NLTK (Natural Language Toolkit): Utilizado para a tokenização e análise estatística do texto.
+
+Deep Translator: Integração com serviços de tradução global para suporte multi-idiomas.
+
+📋 Funcionalidades
+Remoção de Ruído: Extração apenas do título, imagem de destaque e texto principal.
+
+Resumo por IA: Visualização imediata dos pontos-chave da matéria.
+
+Tradução Automática: Conversão instantânea de qualquer fonte internacional para o Português.
+
+PDF Assinado: Geração de arquivos formatados com a marca do autor e link para a fonte original.
+
+Nomenclatura Organizada: Arquivos salvos automaticamente no padrão YYYYMMDD_Titulo_da_Materia.pdf.
+
+⚙️ Instalação e Uso Local
+Clone este repositório:
+
+Bash
+git clone https://github.com/renatobenevenuto/news2pdf-pro.git
+Instale as dependências necessárias:
+
+Bash
+pip install streamlit newspaper3k fpdf2 lxml_html_clean nltk deep-translator requests
+Execute a aplicação:
+
+Bash
 streamlit run app.py
+🌐 Deploy
+A aplicação está hospedada no Streamlit Cloud, integrada diretamente a este repositório para atualizações contínuas (CI/CD).
 
-## 🌐 Hospedagem
-Este projeto está configurado para deploy contínuo no Streamlit Cloud, garantindo disponibilidade gratuita e atualizações automáticas via GitHub.
-
-Focado em transformar ruído digital em conhecimento estruturado.
+Desenvolvido por Renato Benevenuto Engenheiro Civil e entusiasta de Ciência de Dados, focado em transformar dados brutos em conhecimento estruturado.
