@@ -5,6 +5,7 @@ from datetime import datetime
 import re
 import nltk
 from deep_translator import GoogleTranslator
+import base64
 
 # --- CONFIGURAÇÃO E CORREÇÃO NLTK ---
 def setup_nltk():
@@ -33,16 +34,13 @@ class PDF_Gerador(FPDF):
 
 # --- FUNÇÕES DE UTILIDADE ---
 def limpar_nome_arquivo(titulo):
-    """Remove caracteres proibidos para nomes de arquivos."""
     nome = re.sub(r'[\\/*?:"<>|]', "", titulo)
     return nome[:80].strip()
 
 def tratar_texto_pdf(texto):
-    """Evita erros de codificação no PDF padrão."""
     return texto.encode('latin-1', 'ignore').decode('latin-1')
 
 def traduzir_conteudo(texto):
-    """Traduz textos longos dividindo-os em blocos."""
     if not texto: return ""
     translator = GoogleTranslator(source='auto', target='pt')
     passos = 4000
@@ -52,22 +50,29 @@ def traduzir_conteudo(texto):
     except:
         return texto
 
+def exibir_pdf(pdf_bytes):
+    """Gera um frame HTML para visualizar o PDF na tela."""
+    base64_pdf = base64.b64encode(pdf_bytes).decode('utf-8')
+    pdf_display = f'<iframe src="data:application/pdf;base64,{base64_pdf}" width="100%" height="600" type="application/pdf"></iframe>'
+    st.markdown("### 📖 Visualização Prévia")
+    st.markdown(pdf_display, unsafe_allow_html=True)
+
 # --- INTERFACE ---
 st.title("📑 News2PDF Pro: Extrator & Tradutor")
-st.markdown("Converta notícias internacionais em PDFs limpos, resumidos e traduzidos.")
+st.markdown("Extraia, resuma, traduza e visualize notícias de qualquer lugar do mundo.")
 
 with st.sidebar:
     st.header("Configurações")
     traduzir = st.checkbox("Traduzir para Português", value=True)
-    st.info("O processo de tradução e resumo por IA pode levar alguns segundos adicionais.")
+    st.info("O processamento de textos longos pode levar alguns segundos.")
 
 url = st.text_input("Cole o link da notícia aqui:", placeholder="https://www.nytimes.com/...")
 
 if st.button("🚀 Processar Notícia"):
     if url:
         try:
-            with st.spinner("Extraindo e processando dados..."):
-                # 1. Extração
+            with st.spinner("Extraindo e gerando seu documento..."):
+                # 1. Extração e NLP
                 config = Config()
                 config.browser_user_agent = 'Mozilla/5.0'
                 artigo = Article(url, config=config)
@@ -83,16 +88,7 @@ if st.button("🚀 Processar Notícia"):
                     resumo = traduzir_conteudo(resumo)
                     corpo = traduzir_conteudo(corpo)
 
-                # 3. Exibição na Tela
-                col1, col2 = st.columns(2)
-                with col1:
-                    st.subheader("Título Extraído")
-                    st.write(titulo)
-                with col2:
-                    st.subheader("Resumo da IA")
-                    st.info(resumo)
-
-                # 4. Geração do PDF
+                # 3. Geração do PDF em memória
                 pdf = PDF_Gerador()
                 pdf.add_page()
                 
@@ -115,19 +111,22 @@ if st.button("🚀 Processar Notícia"):
                 pdf.multi_cell(0, 7, tratar_texto_pdf(resumo))
                 pdf.ln(10)
 
-                # Seção de Conteúdo
+                # Seção de Conteúdo Completo
                 pdf.set_font('helvetica', 'B', 12)
                 pdf.cell(0, 10, "CONTEÚDO COMPLETO", 0, 1, 'L')
                 pdf.set_font('helvetica', '', 11)
                 pdf.multi_cell(0, 8, tratar_texto_pdf(corpo))
 
-                # --- CORREÇÃO DO ERRO DE FORMATO BINÁRIO ---
+                # Conversão para bytes
                 pdf_bytes = bytes(pdf.output()) 
                 
-                nome_arquivo = f"{datetime.now().strftime('%Y%m%d')}_{limpar_nome_arquivo(titulo)}.pdf"
+                # 4. Exibição na Tela (Visualização)
+                exibir_pdf(pdf_bytes)
                 
+                # 5. Botão de Download
+                nome_arquivo = f"{datetime.now().strftime('%Y%m%d')}_{limpar_nome_arquivo(titulo)}.pdf"
                 st.download_button(
-                    label="📥 Baixar PDF Finalizado",
+                    label="📥 Baixar Documento PDF",
                     data=pdf_bytes,
                     file_name=nome_arquivo,
                     mime="application/pdf"
